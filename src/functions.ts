@@ -1,6 +1,5 @@
 import chalk from "chalk"
 import { Guild, GuildMember, PermissionFlagsBits, PermissionResolvable, PermissionsBitField, TextChannel } from "discord.js"
-import GuildDB from "./schemas/Guild"
 import { GuildOption } from "./types"
 import mongoose from "mongoose";
 
@@ -34,19 +33,4 @@ export const sendTimedMessage = (message: string, channel: TextChannel, duration
     channel.send(message)
         .then(m => setTimeout(async () => (await channel.messages.fetch(m)).delete(), duration))
     return
-}
-
-export const getGuildOption = async (guild: Guild, option: GuildOption) => {
-    if (mongoose.connection.readyState === 0) throw new Error("Database not connected.")
-    let foundGuild = await GuildDB.findOne({ guildID: guild.id })
-    if (!foundGuild) return null;
-    return foundGuild.options[option]
-}
-
-export const setGuildOption = async (guild: Guild, option: GuildOption, value: any) => {
-    if (mongoose.connection.readyState === 0) throw new Error("Database not connected.")
-    let foundGuild = await GuildDB.findOne({ guildID: guild.id })
-    if (!foundGuild) return null;
-    foundGuild.options[option] = value
-    foundGuild.save()
 }
